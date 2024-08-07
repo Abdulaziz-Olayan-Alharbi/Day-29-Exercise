@@ -1,0 +1,68 @@
+create database store;
+
+create table countries(
+    code int primary key ,
+    name varchar(20) unique ,
+    continent_name varchar(20) not null unique
+);
+
+create table users(
+    id int primary key ,
+    full_name varchar(20) not null ,
+    email varchar(20) unique,
+    gender char(1) not null check ( gender = 'm' or gender = 'f' ),
+    date_of_birth varchar(15) not null ,
+    created_at datetime default current_timestamp ,
+    country_code int,
+    foreign key (country_code) references countries(code)
+);
+
+create table orders(
+    id int primary key ,
+    user_id int,
+    foreign key (user_id) references users(id),
+    status varchar(6) check (status = 'start' or status = 'finish' ),
+    created_at datetime default current_timestamp
+);
+
+
+create table products(
+    id int primary key ,
+    name varchar(10) not null ,
+    price int default 0,
+    status varchar(10) check ( status = 'valid' or status = 'expired' ),
+    created_at datetime default current_timestamp
+);
+
+create table order_products (
+    order_id int,
+    foreign key (order_id) references orders(id),
+    product_id int,
+    foreign key (product_id) references products(id),
+    quantity int default 0
+);
+
+insert into countries values (1,'saudi','asia');
+insert into countries values (2,'USA','America');
+insert into countries values (3,'USE','africa');
+
+
+insert into users values (1,'abdulaziz','a@gmail.com','m','1965/01/07',timestamp(current_timestamp),1);
+insert into users values (2,'ali','ali@gmail.com','m','1995/05/27',timestamp(current_timestamp),1);
+insert into users values (3,'muhammed','m@gmail.com','m','1985/11/23',timestamp(current_timestamp),3);
+
+insert into orders values (1,1,'start',timestamp(current_timestamp));
+insert into orders values (2,2,'finish',timestamp(current_timestamp));
+insert into orders values (3,3,'start',timestamp(current_timestamp));
+
+insert into products values (1,'phone',1000,'valid',timestamp(current_timestamp));
+insert into products values (2,'laptop',1500,'expired',timestamp(current_timestamp));
+insert into products values (3,'car',10000,'valid',timestamp(current_timestamp));
+
+insert into order_products values (1,1,30);
+insert into order_products values (2,2,39);
+insert into order_products values (3,3,46);
+
+update countries set countries.name = 'Qatar' where countries.code = 2;
+
+delete from products where id = 3;
